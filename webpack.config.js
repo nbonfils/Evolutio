@@ -1,11 +1,11 @@
 const path = require('path');
 const webpack = require('webpack');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
+  mode: 'development',
   entry: './src/index.js',
   output: {
     filename: 'bundle.js',
@@ -18,17 +18,17 @@ module.exports = {
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
-          oprions: {
+          options: {
             presets: ['env'],
           },
         },
       },
       {
         test: /\.css$/,
-        use: ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: 'css-loader',
-        }),
+        use: [
+          'style-loader',
+          'css-loader',
+        ],
       },
       {
         test: /\.(png|jpg|svg|gif)$/,
@@ -40,7 +40,6 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'Evolutio',
     }),
-    new ExtractTextPlugin('style.css'),
     new CopyWebpackPlugin([{from: 'src/spritesheets', to: 'spritesheets'}]),
     new CleanWebpackPlugin(['dist']),
     new webpack.HotModuleReplacementPlugin(),

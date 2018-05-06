@@ -38,7 +38,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Evolutio',
+      template: 'template.html',
     }),
     new CopyWebpackPlugin([{from: 'src/spritesheets', to: 'spritesheets'}]),
     new CleanWebpackPlugin(['dist']),

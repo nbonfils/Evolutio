@@ -18,6 +18,14 @@ const glowingEffect = (text, count) => () => {
   text.alpha = (alpha + 1) / 2;
 };
 
+// load the custom fonts before initializing the game
+WebFont.load({
+  custom: {
+    families: ['acherus_grotesqueregular'],
+  },
+  active: () => init(),
+});
+
 /**
  * Initialize the game
  */
@@ -111,5 +119,3 @@ function init() {
  */
 function gameLoop(delta) {
 };
-
-init();

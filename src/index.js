@@ -1,4 +1,5 @@
 import './style.css';
+import Fonts from './fonts.css';
 import * as PIXI from 'pixi.js';
 
 import StartScreen from './assets/startScreen.png';
@@ -22,6 +23,7 @@ const glowingEffect = (text, count) => () => {
 WebFont.load({
   custom: {
     families: ['acherus_grotesqueregular'],
+    urls: [Fonts],
   },
   active: () => init(),
 });

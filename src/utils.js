@@ -11,6 +11,7 @@ const glowingEffect = (text, count) => () => {
 
 /**
  * An helper function to create a new text glowing or not
+ * call .removeGlow() before destroying
  *
  * @param {String} s is the text to display
  * @param {Int} size is the size of the text
@@ -40,7 +41,13 @@ export function newText(s, size, isGlowing, ticker) {
     const blurFilter = new PIXI.filters.BlurFilter();
     blured.filters = [blurFilter];
 
-    ticker.add(glowingEffect(blured, 0));
+    const glow = glowingEffect(blured, 0);
+
+    ticker.add(glow);
+
+    container.removeGlow = () => {
+      ticker.remove(glow);
+    };
 
     container.addChild(blured);
   }

@@ -22,6 +22,7 @@ const glowingEffect = (text, count) => () => {
  */
 export function newText(s, size, isGlowing, ticker) {
   const container = new PIXI.Container();
+
   const text = new PIXI.Text(s, {
     fontFamily: 'acherus_grotesqueregular',
     fontSize: size,
@@ -56,6 +57,104 @@ export function newText(s, size, isGlowing, ticker) {
     container.width / 2,
     container.height / 2
   );
+
+  return container;
+}
+
+/**
+ * An helper to create items in a menu,
+ * each created item will have different states:
+ * 0 selected
+ * 1 neutral
+ * 2 disabled
+ *
+ * -1 -> no state defined yet
+ *
+ * don't forget to .removeGlow when removing the item
+ *
+ * @param {String} s is the text to be displayed
+ * @param {Int} size is the size of the text
+ * @param {PIXI.Ticker} ticker is the ticker to which we add the animations
+ * @param {function} callback executes when the item is clicked and selected
+ *
+ * @return {PIXI.Container} the display object containing the item
+ */
+export function newMenuItem(s, size, ticker, callback) {
+  const container = new PIXI.Container();
+
+  const text = new PIXI.Text(s, {
+    fontFamily: 'acherus_grotesqueregular',
+    fontSize: size,
+  });
+
+  const blured = new PIXI.Text(s, {
+    fontFamily: 'acherus_grotesqueregular',
+    fontSize: size,
+  });
+
+  const blurFilter = new PIXI.filters.BlurFilter();
+  blured.filters = [blurFilter];
+
+  const glow = glowingEffect(blured, 0);
+
+  ticker.add(glow);
+
+  container.addChild(text);
+  container.addChild(blured);
+
+  // call before destroying this object
+  container.removeGlow = () => {
+    ticker.remove(glow);
+  };
+
+  // the selected state
+  container.select = () => {
+    text.style.fill = 'white';
+
+    blured.style.fill = '0xd7f4e3';
+    blured.visible = true;
+    blured.updateTransform();
+
+    container.interactive = true;
+    container.buttonMode = true;
+
+    container.state = 0;
+  };
+
+  // the neutral state
+  container.neutral = () => {
+    text.style.fill = 'blue';
+
+    blured.visible = false;
+    blured.updateTransform();
+
+    container.interactive = true;
+    container.buttonMode = true;
+
+    container.state = 1;
+  };
+
+  // the disabled state
+  container.disable = () => {
+    text.style.fill = 'blue';
+    text.alpha = 0.6;
+
+    blured.visible = false;
+    blured.updateTransform();
+
+    container.interactive = false;
+    container.buttonMode = false;
+
+    container.state = 2;
+  };
+
+  container.state = -1;
+
+  container.click = () => {
+    if (container.state == 0) {
+      callback();
+    }
+  };
 
   return container;
 }

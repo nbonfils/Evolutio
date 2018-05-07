@@ -48,7 +48,6 @@ export default class Key {
    * Needs to overwrite this method
    */
   press() {
-    throw new Error('Needs to overwrite the press method');
   }
 
   /**
@@ -57,6 +56,13 @@ export default class Key {
    * Needs to overwrite this method
    */
   release() {
-    throw new Error('Needs to overwrite the release method');
+  }
+
+  /**
+   * Clear the bindings for this key
+   */
+  clear() {
+    this.press = null;
+    this.release = null;
   }
 }

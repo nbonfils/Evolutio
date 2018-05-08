@@ -118,6 +118,7 @@ function menu() {
     40,
     app.ticker,
     () => {
+      console.log('exit');
       for (let item of menuList) {
         item.removeGlow();
         item.getChildAt(0).destroy();
@@ -138,16 +139,22 @@ function menu() {
   // Initialize the menu item list with the item state
   let selected = 0;
   let menuList = [
-    newGameText,
-    loadGameText,
-    settingsText,
-    exitText,
+    newGameText.select(),
+    loadGameText.disable(),
+    settingsText.neutral(),
+    exitText.neutral(),
   ];
 
-  menuList[0].select();
-  menuList[1].disable();
-  menuList[2].neutral();
-  menuList[3].neutral();
+
+  // When the mouse goes over the item, select it
+  const hover = (item, menuList) => () => {
+    for (let i of menuList) {
+      if (i.state == 2) continue;
+      i.neutral();
+    }
+
+    item.select();
+  };
 
 
   // Set up the interaction within the menu
@@ -175,10 +182,12 @@ function menu() {
 
   const confirmMenu = (menuList) => () => {
     for (let item of menuList) {
-      item.click();
+      item.clickItem();
     }
   };
 
+
+  // Menu controls (Key + mouse)
   const upKey = new Key(38);
   const wKey = new Key(87);
   const downKey = new Key(40);
@@ -190,6 +199,11 @@ function menu() {
   downKey.press = downMenu(menuList);
   sKey.press = downMenu(menuList);
   enterKey.press = confirmMenu(menuList);
+
+  for (let item of menuList) {
+    item.on('pointerover', hover(item, menuList));
+    item.on('pointertap', confirmMenu(menuList));
+  }
 
 
   // Position the items on the screen

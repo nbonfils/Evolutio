@@ -119,6 +119,8 @@ export function newMenuItem(s, size, ticker, callback) {
     container.buttonMode = true;
 
     container.state = 0;
+
+    return container;
   };
 
   // the neutral state
@@ -132,6 +134,8 @@ export function newMenuItem(s, size, ticker, callback) {
     container.buttonMode = true;
 
     container.state = 1;
+
+    return container;
   };
 
   // the disabled state
@@ -146,11 +150,13 @@ export function newMenuItem(s, size, ticker, callback) {
     container.buttonMode = false;
 
     container.state = 2;
+
+    return container;
   };
 
   container.state = -1;
 
-  container.click = () => {
+  container.clickItem = () => {
     if (container.state == 0) {
       callback();
     }

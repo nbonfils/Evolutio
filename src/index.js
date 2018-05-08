@@ -73,7 +73,7 @@ function init() {
     window.removeEventListener('keydown', startMenu);
     app.view.removeEventListener('mousedown', startMenu);
 
-    keyToStartText.removeGlow();
+    keyToStartText.removeEffects();
     app.stage.removeChild(keyToStartText);
     keyToStartText.destroy();
 
@@ -120,7 +120,7 @@ function menu() {
     () => {
       console.log('exit');
       for (let item of menuList) {
-        item.removeGlow();
+        item.removeEffects();
         item.getChildAt(0).destroy();
         item.getChildAt(0).destroy();
         item.destroy();

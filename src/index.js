@@ -53,38 +53,41 @@ function init() {
 
 
   // "Press a key to start" text
-  const keyToStartText = newText(
+  const keyToStart = newMenuItem(
     'press a key to start',
     40,
-    true,
-    app.ticker
-  );
+    app.ticker,
+    () => {
+      window.removeEventListener('keydown', start);
+      app.view.removeEventListener('mousedown', start);
 
-  keyToStartText.position.set(
+      keyToStart.removeEffects();
+      keyToStart.destroy();
+
+      menu();
+    }
+  );
+  keyToStart.select();
+  keyToStart.buttonMode = false;
+
+  keyToStart.position.set(
     app.renderer.width / 2,
     app.renderer.height - (app.renderer.height / 6)
   );
 
-  app.stage.addChild(keyToStartText);
+  app.stage.addChild(keyToStart);
 
 
   // Start the game once a click or a key is pressed
-  let startMenu = (e) => {
-    window.removeEventListener('keydown', startMenu);
-    app.view.removeEventListener('mousedown', startMenu);
-
-    keyToStartText.removeEffects();
-    app.stage.removeChild(keyToStartText);
-    keyToStartText.destroy();
-
-    menu();
+  let start = (e) => {
+    keyToStart.clickItem();
   };
 
   window.addEventListener(
-    'keydown', startMenu
+    'keydown', start
   );
   app.view.addEventListener(
-    'mousedown', startMenu
+    'mousedown', start
   );
 }
 

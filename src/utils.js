@@ -188,5 +188,10 @@ export function newMenuItem(s, size, ticker, callback) {
     }
   };
 
+  container.pivot.set(
+    container.width / 2,
+    container.height / 2
+  );
+
   return container;
 }

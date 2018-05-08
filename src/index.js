@@ -207,9 +207,9 @@ function menu() {
 
 
   // Position the items on the screen
-  let x = 100;
-  let y = app.renderer.height / 5;
-  let step = 50;
+  let x = app.renderer.width / 2;
+  let y = app.renderer.height / 2 - 60;
+  let step = 60;
   for (let item of menuList) {
     item.position.set(x, y);
     app.stage.addChild(item);

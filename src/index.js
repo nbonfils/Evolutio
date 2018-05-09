@@ -102,7 +102,39 @@ function menu() {
     'New Game',
     40,
     app.ticker,
-    () => console.log('launch game')
+    () => {
+      console.log('launch game');
+      // clear the menu
+      for (let item of menuList) {
+        item.removeEffects();
+        item.destroy(true);
+      }
+
+      // fade out effect for the bg and title
+      const fadeOut = (item) => () => {
+        item.alpha -= 0.08;
+      };
+      const effects = [];
+      for (let item of app.stage.children) {
+        const e = fadeOut(item);
+        app.ticker.add(e);
+        effects.push(e);
+      }
+
+      // clear the bg and title and launch a new game
+      window.setTimeout(
+        () => {
+          for (let e of effects) {
+            app.ticker.remove(e);
+          }
+          for (let item of app.stage.children) {
+            item.destroy(true);
+            console.log(item);
+          }
+        },
+        250
+      );
+    }
   );
   const loadGameText = newMenuItem(
     'Load Game',
@@ -124,9 +156,10 @@ function menu() {
       console.log('exit');
       for (let item of menuList) {
         item.removeEffects();
-        item.getChildAt(0).destroy();
-        item.getChildAt(0).destroy();
-        item.destroy();
+        item.destroy(true);
+      }
+      for (let item of app.stage.children) {
+        item.destroy(true);
       }
       menuList = null;
       upKey.clear();

@@ -9,6 +9,18 @@ const glowingEffect = (text, count) => () => {
   text.alpha = (alpha + 1) / 2;
 };
 
+// fade out effect for a selected text
+const fadeOutSelected = (text) => () => {
+  text.alpha -= 0.05;
+  text.scale.x += 0.05;
+  text.scale.y += 0.05;
+};
+
+// fade out effect for other than selected text
+const fadeOutOther = (text) => () => {
+  text.alpha -= 0.05;
+};
+
 /**
  * An helper function to create a new text glowing or not
  * call .removeGlow() before destroying
@@ -46,7 +58,7 @@ export function newText(s, size, isGlowing, ticker) {
 
     ticker.add(glow);
 
-    container.removeGlow = () => {
+    container.removeEffects = () => {
       ticker.remove(glow);
     };
 
@@ -95,16 +107,25 @@ export function newMenuItem(s, size, ticker, callback) {
   const blurFilter = new PIXI.filters.BlurFilter();
   blured.filters = [blurFilter];
 
+  // the effect that may be applied to the menu item
   const glow = glowingEffect(blured, 0);
+  const fadeOutS = fadeOutSelected(container);
+  const fadeOutO = fadeOutOther(container);
+
+  // all the effects that are applied to the object
+  container.effects = [];
 
   ticker.add(glow);
+  container.effects.push(glow);
 
   container.addChild(text);
   container.addChild(blured);
 
   // call before destroying this object
-  container.removeGlow = () => {
-    ticker.remove(glow);
+  container.removeEffects = () => {
+    for (let effect of container.effects) {
+      ticker.remove(effect);
+    }
   };
 
   // the selected state
@@ -119,6 +140,8 @@ export function newMenuItem(s, size, ticker, callback) {
     container.buttonMode = true;
 
     container.state = 0;
+
+    return container;
   };
 
   // the neutral state
@@ -132,6 +155,8 @@ export function newMenuItem(s, size, ticker, callback) {
     container.buttonMode = true;
 
     container.state = 1;
+
+    return container;
   };
 
   // the disabled state
@@ -146,15 +171,27 @@ export function newMenuItem(s, size, ticker, callback) {
     container.buttonMode = false;
 
     container.state = 2;
+
+    return container;
   };
 
   container.state = -1;
 
-  container.click = () => {
+  container.clickItem = () => {
     if (container.state == 0) {
-      callback();
+      ticker.add(fadeOutS);
+      container.effects.push(fadeOutS);
+      window.setTimeout(callback, 850);
+    } else {
+      ticker.add(fadeOutO);
+      container.effects.push(fadeOutO);
     }
   };
+
+  container.pivot.set(
+    container.width / 2,
+    container.height / 2
+  );
 
   return container;
 }

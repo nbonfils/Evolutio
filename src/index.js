@@ -53,38 +53,41 @@ function init() {
 
 
   // "Press a key to start" text
-  const keyToStartText = newText(
+  const keyToStart = newMenuItem(
     'press a key to start',
     40,
-    true,
-    app.ticker
-  );
+    app.ticker,
+    () => {
+      window.removeEventListener('keydown', start);
+      app.view.removeEventListener('mousedown', start);
 
-  keyToStartText.position.set(
+      keyToStart.removeEffects();
+      keyToStart.destroy();
+
+      menu();
+    }
+  );
+  keyToStart.select();
+  keyToStart.buttonMode = false;
+
+  keyToStart.position.set(
     app.renderer.width / 2,
     app.renderer.height - (app.renderer.height / 6)
   );
 
-  app.stage.addChild(keyToStartText);
+  app.stage.addChild(keyToStart);
 
 
   // Start the game once a click or a key is pressed
-  let startMenu = (e) => {
-    window.removeEventListener('keydown', startMenu);
-    app.view.removeEventListener('mousedown', startMenu);
-
-    keyToStartText.removeGlow();
-    app.stage.removeChild(keyToStartText);
-    keyToStartText.destroy();
-
-    menu();
+  let start = (e) => {
+    keyToStart.clickItem();
   };
 
   window.addEventListener(
-    'keydown', startMenu
+    'keydown', start
   );
   app.view.addEventListener(
-    'mousedown', startMenu
+    'mousedown', start
   );
 }
 
@@ -118,8 +121,9 @@ function menu() {
     40,
     app.ticker,
     () => {
+      console.log('exit');
       for (let item of menuList) {
-        item.removeGlow();
+        item.removeEffects();
         item.getChildAt(0).destroy();
         item.getChildAt(0).destroy();
         item.destroy();
@@ -138,16 +142,22 @@ function menu() {
   // Initialize the menu item list with the item state
   let selected = 0;
   let menuList = [
-    newGameText,
-    loadGameText,
-    settingsText,
-    exitText,
+    newGameText.select(),
+    loadGameText.disable(),
+    settingsText.neutral(),
+    exitText.neutral(),
   ];
 
-  menuList[0].select();
-  menuList[1].disable();
-  menuList[2].neutral();
-  menuList[3].neutral();
+
+  // When the mouse goes over the item, select it
+  const hover = (item, menuList) => () => {
+    for (let i of menuList) {
+      if (i.state == 2) continue;
+      i.neutral();
+    }
+
+    item.select();
+  };
 
 
   // Set up the interaction within the menu
@@ -175,10 +185,12 @@ function menu() {
 
   const confirmMenu = (menuList) => () => {
     for (let item of menuList) {
-      item.click();
+      item.clickItem();
     }
   };
 
+
+  // Menu controls (Key + mouse)
   const upKey = new Key(38);
   const wKey = new Key(87);
   const downKey = new Key(40);
@@ -191,11 +203,16 @@ function menu() {
   sKey.press = downMenu(menuList);
   enterKey.press = confirmMenu(menuList);
 
+  for (let item of menuList) {
+    item.on('pointerover', hover(item, menuList));
+    item.on('pointertap', confirmMenu(menuList));
+  }
+
 
   // Position the items on the screen
-  let x = 100;
-  let y = app.renderer.height / 5;
-  let step = 50;
+  let x = app.renderer.width / 2;
+  let y = app.renderer.height / 2 - 60;
+  let step = 60;
   for (let item of menuList) {
     item.position.set(x, y);
     app.stage.addChild(item);

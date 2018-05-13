@@ -5,7 +5,14 @@ import Fonts from './fonts.css';
 import Key from './Keyboard.js';
 import {newText, newMenuItem} from './utils';
 
+// game ressources
 import StartScreen from './assets/startScreen.png';
+import GameBackground from './assets/plain.png';
+import CellImg from './assets/Cell.png';
+import CoreImg from './assets/Core.png';
+
+// Some shortcuts
+const presources = PIXI.loader.resources;
 
 const app = new PIXI.Application({
   width: 960,
@@ -52,43 +59,62 @@ function init() {
   app.stage.addChild(startScreenTitle);
 
 
-  // "Press a key to start" text
-  const keyToStart = newMenuItem(
-    'press a key to start',
-    40,
-    app.ticker,
-    () => {
-      window.removeEventListener('keydown', start);
-      app.view.removeEventListener('mousedown', start);
-
-      keyToStart.removeEffects();
-      keyToStart.destroy();
-
-      menu();
-    }
-  );
-  keyToStart.select();
-  keyToStart.buttonMode = false;
-
-  keyToStart.position.set(
-    app.renderer.width / 2,
-    app.renderer.height - (app.renderer.height / 6)
-  );
-
-  app.stage.addChild(keyToStart);
-
-
-  // Start the game once a click or a key is pressed
-  let start = (e) => {
-    keyToStart.clickItem();
+  // When game is loading assets
+  const loading = (loader, ressource) => {
+    console.log('loading: ' + loader.progress + '%');
   };
 
-  window.addEventListener(
-    'keydown', start
-  );
-  app.view.addEventListener(
-    'mousedown', start
-  );
+
+  // When game is ready
+  const ready = () => {
+    // "Press a key to start" text
+    const keyToStart = newMenuItem(
+      'press a key to start',
+      40,
+      app.ticker,
+      () => {
+        window.removeEventListener('keydown', start);
+        app.view.removeEventListener('mousedown', start);
+
+        keyToStart.removeEffects();
+        keyToStart.destroy();
+
+        menu();
+      }
+    );
+    keyToStart.select();
+    keyToStart.buttonMode = false;
+
+    keyToStart.position.set(
+      app.renderer.width / 2,
+      app.renderer.height - (app.renderer.height / 6)
+    );
+
+    app.stage.addChild(keyToStart);
+
+    // Start the game once a click or a key is pressed
+    const start = (e) => {
+      keyToStart.clickItem();
+    };
+
+    window.addEventListener(
+      'keydown', start
+    );
+    app.view.addEventListener(
+      'mousedown', start
+    );
+  };
+
+
+  // Load all the assets for the game before launching
+  PIXI.loader
+    .add([
+      GameBackground,
+      CellImg,
+      CoreImg,
+    ])
+    .on('progress', loading)
+    .load(ready);
 }
 
 /**
@@ -130,6 +156,9 @@ function menu() {
           for (let item of app.stage.children) {
             item.destroy(true);
           }
+
+          // launch the actual game
+          game();
         },
         250
       );
@@ -254,9 +283,17 @@ function menu() {
 }
 
 /**
- * Main game loop function
- *
- * @param {Int} delta is the fractional lag between 2 frames
+ * Main game function
  */
-// function gameLoop(delta) {
-// };
+function game() {
+  // Load the background
+  const background = new PIXI.Sprite(presources[GameBackground].texture);
+
+  background.width = app.screen.width;
+  background.height = app.screen.height;
+
+  app.stage.addChild(background);
+
+
+  //  const Cell = new PIXI.Container();
+};

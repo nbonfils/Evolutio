@@ -1,0 +1,7 @@
+blazebone.ddns.net {
+	proxy / localhost:8080 {
+		websocket
+		#transparent
+	}
+	basicauth / dev evoluti0
+}

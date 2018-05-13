@@ -129,7 +129,6 @@ function menu() {
           }
           for (let item of app.stage.children) {
             item.destroy(true);
-            console.log(item);
           }
         },
         250
@@ -189,6 +188,7 @@ function menu() {
       i.neutral();
     }
 
+    selected = menuList.indexOf(item);
     item.select();
   };
 

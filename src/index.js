@@ -4,10 +4,11 @@ import './style.css';
 import Fonts from './fonts.css';
 import Key from './Keyboard.js';
 import {newText, newMenuItem} from './utils';
+import Cell from './Cell.js';
 
 // game ressources
 import StartScreen from './assets/startScreen.png';
-import GameBackground from './assets/plain.png';
+import GameBG from './assets/GameBG.png';
 import CellImg from './assets/Cell.png';
 import CoreImg from './assets/Core.png';
 
@@ -109,7 +110,7 @@ function init() {
   // Load all the assets for the game before launching
   PIXI.loader
     .add([
-      GameBackground,
+      GameBG,
       CellImg,
       CoreImg,
     ])
@@ -130,13 +131,13 @@ function menu() {
     app.ticker,
     () => {
       console.log('launch game');
-      // clear the menu
+      // Clear the menu
       for (let item of menuList) {
         item.removeEffects();
         item.destroy(true);
       }
 
-      // fade out effect for the bg and title
+      // Fade out effect for the bg and title
       const fadeOut = (item) => () => {
         item.alpha -= 0.08;
       };
@@ -147,7 +148,7 @@ function menu() {
         effects.push(e);
       }
 
-      // clear the bg and title and launch a new game
+      // Clear the bg and title and launch a new game
       window.setTimeout(
         () => {
           for (let e of effects) {
@@ -157,7 +158,7 @@ function menu() {
             item.destroy(true);
           }
 
-          // launch the actual game
+          // Launch the actual game
           game();
         },
         250
@@ -287,7 +288,7 @@ function menu() {
  */
 function game() {
   // Load the background
-  const background = new PIXI.Sprite(presources[GameBackground].texture);
+  const background = new PIXI.Sprite(presources[GameBG].texture);
 
   background.width = app.screen.width;
   background.height = app.screen.height;
@@ -295,5 +296,13 @@ function game() {
   app.stage.addChild(background);
 
 
-  //  const Cell = new PIXI.Container();
+  // The Main character
+  const cell = new Cell(
+    presources[CellImg].texture,
+    presources[CoreImg].texture,
+  );
+
+  cell.position.set(app.renderer.width / 2, app.renderer.height / 2);
+
+  app.stage.addChild(cell);
 };

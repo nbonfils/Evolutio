@@ -40,6 +40,8 @@ export default class Key {
     window.addEventListener(
       'keyup', this.upHandler.bind(this), false
     );
+
+    this.clear = this.clear.bind(this);
   }
 
   /**

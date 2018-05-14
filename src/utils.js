@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import Key from './Keyboard.js';
 
 // glowing effect for a text
 const glowingEffect = (text, count) => () => {
@@ -194,4 +195,23 @@ export function newMenuItem(s, size, ticker, callback) {
   );
 
   return container;
+}
+
+/**
+ * A function to initialize all controls for the game
+ *
+ * @return {Object} an object containing all the control keys
+ */
+export function initControls() {
+  return {
+    'up': new Key(38),
+    'down': new Key(40),
+    'left': new Key(37),
+    'right': new Key(39),
+    'enter': new Key(13),
+    'w': new Key(87),
+    'a': new Key(65),
+    's': new Key(83),
+    'd': new Key(68),
+  };
 }

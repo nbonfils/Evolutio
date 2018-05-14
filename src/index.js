@@ -2,8 +2,7 @@ import * as PIXI from 'pixi.js';
 
 import './style.css';
 import Fonts from './fonts.css';
-import Key from './Keyboard.js';
-import {newText, newMenuItem} from './utils';
+import {newText, newMenuItem, initControls} from './utils';
 import Cell from './Cell.js';
 
 // game ressources
@@ -14,6 +13,8 @@ import CoreImg from './assets/Core.png';
 
 // Some shortcuts
 const presources = PIXI.loader.resources;
+
+const controls = initControls();
 
 const app = new PIXI.Application({
   width: 960,
@@ -137,6 +138,13 @@ function menu() {
         item.destroy(true);
       }
 
+      // Clear the control keys
+      for (let key in controls) {
+        if (controls.hasOwnProperty(key)) {
+          controls[key].clear();
+        }
+      }
+
       // Fade out effect for the bg and title
       const fadeOut = (item) => () => {
         item.alpha -= 0.08;
@@ -191,11 +199,14 @@ function menu() {
         item.destroy(true);
       }
       menuList = null;
-      upKey.clear();
-      wKey.clear();
-      sKey.clear();
-      downKey.clear();
-      enterKey.clear();
+
+      // Clear the control keys
+      for (let key in controls) {
+        if (controls.hasOwnProperty(key)) {
+          controls[key].clear();
+        }
+      }
+
       init();
     }
   );
@@ -254,17 +265,11 @@ function menu() {
 
 
   // Menu controls (Key + mouse)
-  const upKey = new Key(38);
-  const wKey = new Key(87);
-  const downKey = new Key(40);
-  const sKey = new Key(83);
-  const enterKey = new Key(13);
-
-  upKey.press = upMenu(menuList);
-  wKey.press = upMenu(menuList);
-  downKey.press = downMenu(menuList);
-  sKey.press = downMenu(menuList);
-  enterKey.press = confirmMenu(menuList);
+  controls.up.press = upMenu(menuList);
+  controls.w.press = upMenu(menuList);
+  controls.down.press = downMenu(menuList);
+  controls.s.press = downMenu(menuList);
+  controls.enter.press = confirmMenu(menuList);
 
   for (let item of menuList) {
     item.on('pointerover', hover(item, menuList));
@@ -303,6 +308,10 @@ function game() {
   );
 
   cell.position.set(app.renderer.width / 2, app.renderer.height / 2);
+
+  // Control the cell
+  controls.left.press = cell.leftAcc;
+  controls.left.release = cell.leftDec;
 
   app.stage.addChild(cell);
 };

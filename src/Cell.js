@@ -20,16 +20,29 @@ export default class Cell extends PIXI.Container {
     this.cellSprite = new PIXI.Sprite(cellText);
     this.coreSprite = new PIXI.Sprite(coreText);
     this.ticker = new PIXI.ticker.Ticker();
+    this.maxSpeed = 5;
     this.speedX = 0;
     this.speedY = 0;
     this.accX = 0;
     this.accY = 0;
+    this.acceleratingX = false;
+    this.acceleratingY = false;
+    this.deceleratingX = false;
+    this.deceleratingY = false;
 
     // Bind the functions
     this.destroy = this.destroy.bind(this);
     this.move = this.move.bind(this);
+    this.controlAcc = this.controlAcc.bind(this);
+    this.controlDec = this.controlDec.bind(this);
     this.leftAcc = this.leftAcc.bind(this);
     this.leftDec = this.leftDec.bind(this);
+    this.rightAcc = this.rightAcc.bind(this);
+    this.rightDec = this.rightDec.bind(this);
+    this.upAcc = this.upAcc.bind(this);
+    this.upDec = this.upDec.bind(this);
+    this.downAcc = this.downAcc.bind(this);
+    this.downDec = this.downDec.bind(this);
 
     this.cellSprite.anchor.set(0.5, 0.5);
     this.coreSprite.anchor.set(0.5, 0.5);
@@ -41,6 +54,8 @@ export default class Cell extends PIXI.Container {
     // The animations
     this.ticker.start();
     this.ticker.add(this.move);
+    this.ticker.add(this.controlAcc);
+    this.ticker.add(this.controlDec);
   }
 
   /**
@@ -64,26 +79,108 @@ export default class Cell extends PIXI.Container {
   }
 
   /**
-   * Left movement with smooth acceleration
+   * Controls the acceleration
    */
-  leftAcc() {
-    console.log(this.speedX);
-    if (this.speedX <= -5) {
+  controlAcc() {
+    if (this.acceleratingX && Math.abs(this.speedX) >= this.maxSpeed) {
+      this.acceleratingX = false;
       this.accX = 0;
-      this.speedX = 5;
-    } else {
-      this.accX = -0.25;
+      this.speedX = (this.speedX > 0 ? this.maxSpeed : -this.maxSpeed);
+    }
+    if (this.acceleratingY && Math.abs(this.speedY) >= this.maxSpeed) {
+      this.acceleratingY = false;
+      this.accY = 0;
+      this.speedY = (this.speedY > 0 ? this.maxSpeed : -this.maxSpeed);
     }
   }
 
+
   /**
-   * decelerate when left is released
+   * Controls the deceleration
+   */
+  controlDec() {
+    if (this.deceleratingX && Math.abs(this.speedX) <= 0.3) {
+      this.deceleratingX = false;
+      this.accX = 0;
+      this.speedX = 0;
+    }
+    if (this.deceleratingY && Math.abs(this.speedY) <= 0.3) {
+      this.deceleratingY = false;
+      this.accY = 0;
+      this.speedY = 0;
+    }
+  }
+
+
+  /**
+   * Left movement with smooth acceleration
+   */
+  leftAcc() {
+    this.acceleratingX = true;
+    this.deceleratingX = false;
+    this.accX = -0.25;
+  }
+
+  /**
+   * Decelerate when left is released
    */
   leftDec() {
-    if (this.speed >= 0) {
-      this.accX = 0;
-    } else {
-      this.accX = 0.1;
-    }
+    this.acceleratingX = false;
+    this.deceleratingX = true;
+    this.accX = 0.1;
+  }
+
+  /**
+   * Right movement with smooth acceleration
+   */
+  rightAcc() {
+    this.acceleratingX = true;
+    this.deceleratingX = false;
+    this.accX = 0.25;
+  }
+
+  /**
+   * Decelerate when right is released
+   */
+  rightDec() {
+    this.acceleratingX = false;
+    this.deceleratingX = true;
+    this.accX = -0.1;
+  }
+
+  /**
+   * Up movement with smooth acceleration
+   */
+  upAcc() {
+    this.acceleratingY = true;
+    this.deceleratingY = false;
+    this.accY = -0.25;
+  }
+
+  /**
+   * Decelerate when up is released
+   */
+  upDec() {
+    this.acceleratingY = false;
+    this.deceleratingY = true;
+    this.accY = 0.1;
+  }
+
+  /**
+   * Down movement with smooth acceleration
+   */
+  downAcc() {
+    this.acceleratingY = true;
+    this.deceleratingY = false;
+    this.accY = 0.25;
+  }
+
+  /**
+   * decelerate when down is released
+   */
+  downDec() {
+    this.acceleratingY = false;
+    this.deceleratingY = true;
+    this.accY = -0.1;
   }
 }

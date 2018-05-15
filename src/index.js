@@ -312,6 +312,12 @@ function game() {
   // Control the cell
   controls.left.press = cell.leftAcc;
   controls.left.release = cell.leftDec;
+  controls.right.press = cell.rightAcc;
+  controls.right.release = cell.rightDec;
+  controls.up.press = cell.upAcc;
+  controls.up.release = cell.upDec;
+  controls.down.press = cell.downAcc;
+  controls.down.release = cell.downDec;
 
   app.stage.addChild(cell);
 };

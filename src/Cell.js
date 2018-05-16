@@ -127,7 +127,7 @@ export default class Cell extends PIXI.Container {
   leftDec() {
     this.acceleratingX = false;
     this.deceleratingX = true;
-    this.accX = 0.1;
+    this.accX = Math.sign(this.speedX) * -0.1;
   }
 
   /**
@@ -145,7 +145,7 @@ export default class Cell extends PIXI.Container {
   rightDec() {
     this.acceleratingX = false;
     this.deceleratingX = true;
-    this.accX = -0.1;
+    this.accX = Math.sign(this.speedX) * -0.1;
   }
 
   /**
@@ -163,7 +163,7 @@ export default class Cell extends PIXI.Container {
   upDec() {
     this.acceleratingY = false;
     this.deceleratingY = true;
-    this.accY = 0.1;
+    this.accY = Math.sign(this.speedY) * -0.1;
   }
 
   /**
@@ -181,6 +181,6 @@ export default class Cell extends PIXI.Container {
   downDec() {
     this.acceleratingY = false;
     this.deceleratingY = true;
-    this.accY = -0.1;
+    this.accY = Math.sign(this.speedY) * -0.1;
   }
 }

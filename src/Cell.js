@@ -10,10 +10,8 @@ export default class Cell extends PIXI.Container {
    * @constructor
    * @param {PIXI.Texture} cellText is the texture of the cell
    * @param {PIXI.Texture} coreText is the texture of the core
-   * @param {PIXI.Ticker} ticker is the ticker which we'll use
-   *                      to animate our cell
    */
-  constructor(cellText, coreText, ticker) {
+  constructor(cellText, coreText) {
     super();
 
     // Init the members
@@ -43,6 +41,7 @@ export default class Cell extends PIXI.Container {
     this.upDec = this.upDec.bind(this);
     this.downAcc = this.downAcc.bind(this);
     this.downDec = this.downDec.bind(this);
+
 
     this.cellSprite.anchor.set(0.5, 0.5);
     this.coreSprite.anchor.set(0.5, 0.5);

@@ -3,7 +3,8 @@ import * as PIXI from 'pixi.js';
 import './style.css';
 import Fonts from './fonts.css';
 import {newText, newMenuItem, initControls} from './utils';
-import Cell from './Cell.js';
+import Cell from './Cell';
+import Camera from './Camera';
 
 // game ressources
 import StartScreen from './assets/startScreen.png';
@@ -292,13 +293,16 @@ function menu() {
  * Main game function
  */
 function game() {
+  // Init the world and the camera
+  const world = new PIXI.Container();
+  const cam = new Camera(world, app.renderer.width, app.renderer.height);
+  app.stage.addChild(world);
+  app.stage.addChild(cam);
+
+
   // Load the background
   const background = new PIXI.Sprite(presources[GameBG].texture);
-
-  background.width = app.screen.width;
-  background.height = app.screen.height;
-
-  app.stage.addChild(background);
+  world.addChild(background);
 
 
   // The Main character
@@ -319,5 +323,7 @@ function game() {
   controls.down.press = cell.downAcc;
   controls.down.release = cell.downDec;
 
-  app.stage.addChild(cell);
+  world.addChild(cell);
+
+  cam.follow(cell);
 };

@@ -325,5 +325,5 @@ function game() {
 
   world.addChild(cell);
 
-  cam.follow(cell);
+  cam.follow(cell, 100);
 };

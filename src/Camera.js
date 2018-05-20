@@ -29,13 +29,10 @@ export default class Camera extends PIXI.Container {
       this._height = height;
     });
 
-    // Sync the camera pos with the world
-    this.ticker.add(() => {
-      this.world.x = -this.cameraX + (this._width / 2);
-      this.world.y = -this.cameraY + (this._height / 2);
-    });
-
     // Bind the functions
+    this.setX = this.setX.bind(this);
+    this.setY = this.setY.bind(this);
+    this.setPos = this.setPos.bind(this);
     this.follow = this.follow.bind(this);
     this.unfollow = this.unfollow.bind(this);
 
@@ -44,14 +41,48 @@ export default class Camera extends PIXI.Container {
   }
 
   /**
+   * Set the camera X pos
+   *
+   * @param {Int} x is the X pos in the world
+   */
+  setX(x) {
+    this.cameraX = x;
+    this.world.x = -this.cameraX + (this._width / 2);
+  }
+
+  /**
+   * Set the camera Y pos
+   *
+   * @param {Int} y is the Y pos in the world
+   */
+  setY(y) {
+    this.cameraY = y;
+    this.world.y = -this.cameraY + (this._height / 2);
+  }
+
+  /**
+   * Set the pos of the camera in the world
+   *
+   * @param {Int} x is the X pos in the world
+   * @param {Int} y is the Y pos in the world
+   */
+  setPos(x, y) {
+    this.setX(x);
+    this.setY(y);
+  }
+
+  /**
    * Make the cam follow the entity
    *
    * @param {PIXI.DisplayObject} entity the cam will follow
+   * @param {Int} latency is the latency before the cam follows
    */
-  follow(entity) {
+  follow(entity, latency) {
     this.followFunc = () => {
-      this.cameraX = entity.x;
-      this.cameraY = entity.y;
+      // Clojure to keep the entity pos at that time
+      window.setTimeout(((x, y) => () => {
+        this.setPos(x, y);
+      })(entity.x, entity.y), latency);
     };
 
     this.ticker.add(this.followFunc);

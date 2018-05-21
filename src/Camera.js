@@ -77,12 +77,12 @@ export default class Camera extends PIXI.Container {
    * @param {PIXI.DisplayObject} entity the cam will follow
    * @param {Int} latency is the latency before the cam follows
    */
-  follow(entity, latency) {
+  follow(entity) {
     this.followFunc = () => {
-      // Clojure to keep the entity pos at that time
-      window.setTimeout(((x, y) => () => {
-        this.setPos(x, y);
-      })(entity.x, entity.y), latency);
+      this.setPos(
+        entity.x - (entity.speedX * 2),
+        entity.y - (entity.speedY * 2),
+      );
     };
 
     this.ticker.add(this.followFunc);

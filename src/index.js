@@ -32,10 +32,16 @@ WebFont.load({
   active: () => init(),
 });
 
+const textTicker = new PIXI.ticker.Ticker();
+
 /**
  * Initialize the game
  */
 function init() {
+  // The ticker for text animation
+  textTicker.start();
+
+
   // Load the starting screen background
   const background = PIXI.Sprite.fromImage(StartScreen);
 
@@ -50,7 +56,7 @@ function init() {
     'eVOLUTIO',
     50,
     true,
-    app.ticker
+    textTicker
   );
 
   // Center the title
@@ -74,7 +80,7 @@ function init() {
     const keyToStart = newMenuItem(
       'press a key to start',
       40,
-      app.ticker,
+      textTicker,
       () => {
         window.removeEventListener('keydown', start);
         app.view.removeEventListener('mousedown', start);
@@ -130,7 +136,7 @@ function menu() {
   const newGameText = newMenuItem(
     'New Game',
     40,
-    app.ticker,
+    textTicker,
     () => {
       console.log('launch game');
       // Clear the menu
@@ -153,43 +159,44 @@ function menu() {
       const effects = [];
       for (let item of app.stage.children) {
         const e = fadeOut(item);
-        app.ticker.add(e);
+        textTicker.add(e);
         effects.push(e);
       }
 
       // Clear the bg and title and launch a new game
-      window.setTimeout(
+      PIXI.setTimeout(
+        0.25,
         () => {
           for (let e of effects) {
-            app.ticker.remove(e);
+            textTicker.remove(e);
           }
           for (let item of app.stage.children) {
             item.destroy(true);
           }
 
           // Launch the actual game
+          textTicker.destroy();
           game();
-        },
-        250
+        }
       );
     }
   );
   const loadGameText = newMenuItem(
     'Load Game',
     40,
-    app.ticker,
+    textTicker,
     () => console.log('load game')
   );
   const settingsText = newMenuItem(
     'Settings',
     40,
-    app.ticker,
+    textTicker,
     () => console.log('launch settings')
   );
   const exitText = newMenuItem(
     'Exit',
     40,
-    app.ticker,
+    textTicker,
     () => {
       console.log('exit');
       for (let item of menuList) {
@@ -208,7 +215,8 @@ function menu() {
         }
       }
 
-      init();
+      textTicker.destroy();
+      app.destroy();
     }
   );
 
@@ -325,5 +333,5 @@ function game() {
 
   world.addChild(cell);
 
-  cam.follow(cell, 100);
+  cam.follow(cell);
 };

@@ -164,20 +164,21 @@ function menu() {
       }
 
       // Clear the bg and title and launch a new game
-      PIXI.setTimeout(
-        0.25,
+      window.setTimeout(
         () => {
           for (let e of effects) {
             textTicker.remove(e);
           }
           for (let item of app.stage.children) {
+            console.log(item);
             item.destroy(true);
           }
 
           // Launch the actual game
           textTicker.destroy();
           game();
-        }
+        },
+        250
       );
     }
   );
